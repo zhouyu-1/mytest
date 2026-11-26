@@ -27,33 +27,45 @@ const DEFAULT_MODEL = '@cf/meta/llama-4-scout-17b-16e-instruct';
  */
 const PROMPT = [
   'You are a professional nutritionist specializing in Asian cuisine.',
-  'Analyze this food photo. List EVERY visible ingredient separately.',
-  'Do NOT merge ingredients into one dish name — each component must be its own item.',
+  'Analyze this food photo carefully.',
   '',
-  'MUST check all four categories below:',
-  '1. Staple / Carbs: rice, noodles, vermicelli (透明细粉), rice noodles, glass noodles, bread, bun',
-  '   → These are OFTEN hidden under soup and toppings. Look carefully at the bottom of the bowl.',
-  '2. Protein: egg, meat slices, meatballs, fish, tofu, shrimp, sausage',
-  '3. Vegetables: leafy greens, bean sprouts, mushrooms, seaweed, wood ear',
-  '4. Soup base & oil: broth, chili oil, sesame oil, cooking oil',
+  'STEP 1 — Identify the meal STRUCTURE first:',
+  '· Is it a bowl of soup/noodles? (liquid with noodles/vermicelli)',
+  '· Is it a plate of rice with toppings? (盖浇饭 / 快餐 / 便当)',
+  '· Is it multiple separate dishes? (几道菜 + 一碗饭)',
+  '· Is it a single dish?',
+  'Do NOT guess noodles if you only see rice. Look at the actual texture:',
+  '  - Rice = 白色颗粒状，松散',
+  '  - Noodles/vermicelli = 细长条状、半透明、卷曲',
+  '  - If you see BOTH a rice plate and a separate soup bowl, they are SEPARATE items.',
   '',
-  'Estimation rules (IMPORTANT — avoid underestimating):',
-  '- First find a reference object (bowl rim diameter, chopsticks, spoon, table edge) to estimate container volume;',
-  '- A typical home soup bowl is 700~1000ml;',
-  '- Asian soup noodles/vermicelli usually weigh 500~800g total, 450~800 kcal;',
-  '- Cooked vermicelli/noodles in a soup bowl: 200~350g (a small handful = at least 150g, NOT 20g);',
-  '- Rice in a normal bowl: 150~200g;',
-  '- Stir-fried / deep-fried items contain extra oil, add 30~50% calories vs boiled;',
-  '- If packaging label text is visible, prefer the label values.',
+  'STEP 2 — List EVERY ingredient separately. Do NOT merge into one dish name.',
+  'Check all four categories:',
+  '1. Staple/Carbs: rice (米饭), noodles (面条), vermicelli (粉丝/米粉), bread, bun',
+  '2. Protein: egg, meat slices, meatballs, fish, tofu, shrimp, sausage, 卤味',
+  '3. Vegetables: leafy greens, bean sprouts (豆芽), mushrooms (菇), seaweed, wood ear (木耳)',
+  '4. Soup base & oil: broth (汤), chili oil, sesame oil, cooking oil',
   '',
-  'Output JSON only, no explanation, no markdown code block:',
-  '{"items":[{"name":"食材中文名","portion":"份量描述，如 1碗(200g)","grams":200,"kcal":220,"kcal_low":180,"kcal_high":260,"confidence":0.85}],"total_kcal":520,"summary":"一句话描述这顿饭"}',
-  'IMPORTANT: total_kcal MUST equal the sum of all items kcal. name MUST be in Chinese. grams/kcal/kcal_low/kcal_high are integers. confidence is 0-1.'
+  'STEP 3 — Estimate amounts with a reference object (plate size, bowl rim, chopsticks):',
+  '- A normal bowl of cooked rice: 150~250g',
+  '- A standard plate of rice for a meal: 200~300g',
+  '- Soup in a small bowl: 200~400ml',
+  '- Stir-fried dishes contain extra oil (+30~50% calories vs boiled)',
+  '- Do NOT underestimate: a small handful of vermicelli is at least 150g',
+  '',
+  'Output JSON only, no explanation, no markdown:',
+  '{"structure":"rice_bowl|soup_noodle|multi_dish|single_dish","items":[{"name":"食材中文名","portion":"份量描述","grams":200,"kcal":220,"kcal_low":180,"kcal_high":260,"confidence":0.85}],"total_kcal":520,"summary":"一句话描述这顿饭"}',
+  '',
+  'RULES:',
+  '- name MUST be in Chinese',
+  '- total_kcal MUST equal the sum of all items kcal',
+  '- Include the soup as a separate item if it is in its own bowl',
+  '- If a category is not present, just omit it (do not invent food)'
 ].join('\n');
 
 const USER_HINT = [
-  'List all ingredients separately with Chinese names — especially noodles/vermicelli/rice hidden under the toppings.',
-  'Do not underestimate the amount of vermicelli/noodles: a soup bowl usually contains 200-350g cooked.',
+  'First determine the meal structure (rice plate vs noodle soup vs multiple dishes), then list every ingredient separately with Chinese names.',
+  'Be accurate about what you actually see — do not invent noodles if there are none.',
   'total_kcal must be the sum of all items.',
   'Output JSON only.'
 ].join(' ');
@@ -77,17 +89,34 @@ function parseLoose(text) {
   if (!text) throw new Error('模型没有返回内容');
   let t = String(text).trim().replace(/^```[a-zA-Z]*\s*/, '').replace(/```$/, '').trim();
   const start = t.indexOf('{');
-  const end = t.lastIndexOf('}');
-  if (start < 0 || end <= start) throw new Error('模型返回里没有 JSON');
-  const slice = t.slice(start, end + 1);
-  try { return JSON.parse(slice); }
-  catch (e) {
-    try { return JSON.parse(slice.replace(/,\s*([}\]])/g, '$1')); }
-    catch (e2) {
-      try { return JSON.parse(slice.replace(/,\s*([}\]])/g, '$1').replace(/'/g, '"')); }
-      catch (e3) { throw new Error('无法解析模型返回的 JSON'); }
+  if (start < 0) throw new Error('模型返回里没有 JSON');
+
+  // 先试完整的
+  let end = t.lastIndexOf('}');
+  if (end > start) {
+    const slice = t.slice(start, end + 1);
+    const attempts = [
+      slice,
+      slice.replace(/,\s*([}\]])/g, '$1'),
+      slice.replace(/,\s*([}\]])/g, '$1').replace(/'/g, '"')
+    ];
+    for (const a of attempts) {
+      try { return JSON.parse(a); } catch (e) { /* 继续 */ }
     }
   }
+
+  /*
+   * 兜底：输出被截断时（max_tokens 用尽），
+   * 逐步回退到最后一个完整的 } 再尝试解析。
+   * 这样即使 JSON 没写完，也能拿到部分结果。
+   */
+  for (let cut = end > start ? end : t.length; cut > start + 10; cut--) {
+    if (t[cut] !== '}') continue;
+    const slice = t.slice(start, cut + 1);
+    try { return JSON.parse(slice.replace(/,\s*([}\]])/g, '$1')); } catch (e) { /* 继续回退 */ }
+  }
+
+  throw new Error('无法解析模型返回的 JSON（可能被截断）');
 }
 
 function normalize(raw) {
@@ -226,7 +255,7 @@ exports.handler = async (event, context) => {
             ]
           }
         ],
-        max_tokens: 1200,
+        max_tokens: 2000,
         temperature: 0.1
       }),
       signal: controller.signal
