@@ -37,21 +37,24 @@ const PROMPT = [
   '3. Vegetables: leafy greens, bean sprouts, mushrooms, seaweed, wood ear',
   '4. Soup base & oil: broth, chili oil, sesame oil, cooking oil',
   '',
-  'Estimation rules:',
+  'Estimation rules (IMPORTANT — avoid underestimating):',
   '- First find a reference object (bowl rim diameter, chopsticks, spoon, table edge) to estimate container volume;',
   '- A typical home soup bowl is 700~1000ml;',
-  '- Asian soup noodles usually weigh 500~800g total, 450~800 kcal;',
-  '- Cooked noodles/vermicelli in soup are typically 200~350g;',
+  '- Asian soup noodles/vermicelli usually weigh 500~800g total, 450~800 kcal;',
+  '- Cooked vermicelli/noodles in a soup bowl: 200~350g (a small handful = at least 150g, NOT 20g);',
+  '- Rice in a normal bowl: 150~200g;',
   '- Stir-fried / deep-fried items contain extra oil, add 30~50% calories vs boiled;',
   '- If packaging label text is visible, prefer the label values.',
   '',
   'Output JSON only, no explanation, no markdown code block:',
   '{"items":[{"name":"食材中文名","portion":"份量描述，如 1碗(200g)","grams":200,"kcal":220,"kcal_low":180,"kcal_high":260,"confidence":0.85}],"total_kcal":520,"summary":"一句话描述这顿饭"}',
-  'Note: name MUST be in Chinese. grams/kcal/kcal_low/kcal_high are integers. confidence is 0-1.'
+  'IMPORTANT: total_kcal MUST equal the sum of all items kcal. name MUST be in Chinese. grams/kcal/kcal_low/kcal_high are integers. confidence is 0-1.'
 ].join('\n');
 
 const USER_HINT = [
   'List all ingredients separately with Chinese names — especially noodles/vermicelli/rice hidden under the toppings.',
+  'Do not underestimate the amount of vermicelli/noodles: a soup bowl usually contains 200-350g cooked.',
+  'total_kcal must be the sum of all items.',
   'Output JSON only.'
 ].join(' ');
 
@@ -110,7 +113,24 @@ function normalize(raw) {
 
   if (!items.length) throw new Error('未识别出食物，请换一张更清晰的饭菜照片');
 
-  const total = Math.round(Number(raw.total_kcal || 0)) || items.reduce((a, b) => a + b.kcal, 0);
+  /*
+   * 合计热量：优先用各项之和。
+   *
+   * 原因：模型有时会返回一个"整道菜"的 total_kcal（比如只算汤 420），
+   * 但 items 已经拆分成了 7 项（实际 740）。这时用 raw.total_kcal 会严重偏低。
+   * 所以当两者差距超过 30% 时，以各项之和为准。
+   */
+  const sum = items.reduce((a, b) => a + b.kcal, 0);
+  const rawTotal = Math.round(Number(raw.total_kcal || 0) || 0);
+  let total = sum;
+  if (rawTotal > 0 && sum > 0) {
+    const diff = Math.abs(rawTotal - sum) / Math.max(rawTotal, sum);
+    // 差距小于 30% 时认为两者一致，取模型给的（可能更准）；否则用累加值
+    total = diff <= 0.3 ? rawTotal : sum;
+  } else if (rawTotal > 0) {
+    total = rawTotal;
+  }
+
   return { items, total_kcal: total, summary: String(raw.summary || '') };
 }
 
