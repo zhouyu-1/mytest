@@ -1,17 +1,17 @@
 {
   "versionCode": 7,
   "versionName": "1.4.3",
-  "apkUrl": "https://cdn.jsdelivr.net/gh/zhouyu-1/mytest@latest/dist/calorie-diary-latest.apk",
+  "apkUrl": "https://cdn.jsdelivr.net/gh/zhouyu-1/mytest@13b64eadbfe942496efea9509161deeb0631f165/dist/calorie-diary-latest.apk",
   "size": 4427477,
   "sha256": "9424EFDDA1C2540C70B5E55C05A013BCE7E7C8ABB87060693622A3DB04CE8B71",
   "force": false,
   "changelog": [
-    "支持应用内一键更新（GitHub API 渠道，国内直连无需梯子）",
+    "支持应用内一键更新（国内直连）",
     "拍照识别优化：主食不漏识别",
     "修复金针菇/豆芽误判成面条",
     "份量估算更准确",
     "识别速度提升到5-10秒"
   ],
-  "publishedAt": "2026-11-26T07:43:34.475Z",
+  "publishedAt": "2026-11-26T07:45:57.680Z",
   "channel": "jsdelivr"
 }
