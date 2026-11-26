@@ -1,17 +1,16 @@
 {
-  "versionCode": 7,
-  "versionName": "1.4.3",
-  "apkUrl": "https://cdn.jsdelivr.net/gh/zhouyu-1/mytest@13b64eadbfe942496efea9509161deeb0631f165/dist/calorie-diary-latest.apk",
-  "size": 4427477,
-  "sha256": "9424EFDDA1C2540C70B5E55C05A013BCE7E7C8ABB87060693622A3DB04CE8B71",
+  "versionCode": 8,
+  "versionName": "1.4.4",
+  "apkUrl": "https://cdn.jsdelivr.net/gh/zhouyu-1/mytest@164b0da54384e976b00fcc228dccb7c8af57f616/dist/calorie-diary-latest.apk",
+  "size": 4428245,
+  "sha256": "2D1FB475B6A00E3C1A8E7432764E095AE232B5C688132A6B6B9EDA4DC130F024",
   "force": false,
   "changelog": [
-    "支持应用内一键更新（国内直连）",
-    "拍照识别优化：主食不漏识别",
-    "修复金针菇/豆芽误判成面条",
-    "份量估算更准确",
-    "识别速度提升到5-10秒"
+    "修复 iOS 拍照识别显示网络不通（错误文案误导）",
+    "新增饮料和包装食品识别（汽水/果汁/牛奶/啤酒/零食）",
+    "网络失败时给出明确排查提示",
+    "iOS Safari 增加 75 秒超时保护"
   ],
-  "publishedAt": "2026-11-26T07:45:57.680Z",
+  "publishedAt": "2026-11-26T09:23:11.857Z",
   "channel": "jsdelivr"
 }
