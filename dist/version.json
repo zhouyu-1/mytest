@@ -2,8 +2,8 @@
   "versionCode": 6,
   "versionName": "1.4.2",
   "apkUrl": "https://cdn.jsdelivr.net/gh/zhouyu-1/mytest@latest/dist/calorie-diary-latest.apk",
-  "size": 4427289,
-  "sha256": "2D76CCF9513293BE6077C4451E22364D0DDC6463AE4AF530FD5D9B69692ECD35",
+  "size": 4427205,
+  "sha256": "AB08ECCD213D797E40E110D96285823D6D727E1C3F7B0F36F4B3CA8DAEFD2C49",
   "force": false,
   "changelog": [
     "支持应用内一键更新（国内可用）",
@@ -12,6 +12,6 @@
     "份量估算更准确",
     "识别速度提升到5-10秒"
   ],
-  "publishedAt": "2026-11-26T07:32:23.805Z",
+  "publishedAt": "2026-11-26T07:33:50.191Z",
   "channel": "jsdelivr"
 }
