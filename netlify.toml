@@ -1,0 +1,9 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/recognize"
+  to = "/.netlify/functions/recognize"
+  status = 200
+  force = true

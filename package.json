@@ -1,0 +1,9 @@
+{
+  "name": "calorie-relay",
+  "version": "1.0.0",
+  "private": true,
+  "description": "热量日记 · 拍照识别中转服务（Netlify Function + Cloudflare Workers AI）",
+  "engines": {
+    "node": "20"
+  }
+}
