@@ -1,16 +1,16 @@
 {
-  "versionCode": 10,
-  "versionName": "1.5.1",
-  "apkUrl": "https://cdn.jsdelivr.net/gh/zhouyu-1/mytest@332d25e7acf45ea672ad5b13f17889905d3a5899/dist/calorie-diary-latest.apk",
-  "size": 4431105,
-  "sha256": "B347DFE9F41CA3647090B3F1ED983DA82726BC7546D28CE14F389284BB9E17C9",
+  "versionCode": 11,
+  "versionName": "1.5.2",
+  "apkUrl": "https://cdn.jsdelivr.net/gh/zhouyu-1/mytest@d6fb89cdb8252bb91b46f0e16eda1b8e54283854/dist/calorie-diary-latest.apk",
+  "size": 4432493,
+  "sha256": "A53EB565673DFA020BA24AA32CA85F3A6D83BFA5A9DC0EF2B6F0666B1D9B454E",
   "force": false,
   "changelog": [
-    "内置识别 Key，开箱即用无需配置",
-    "硬基流动 Qwen3-Omni-30B，识别 3~6 秒",
-    "修复演示模式被内置 Key 覆盖的问题",
-    "保留手动配置（填自己的 Key 优先）"
+    "修复更新进度条：显示真实下载百分比和速度",
+    "按钮上直接显示进度（如 45%）",
+    "下载卡住时提示仍在进行",
+    "内置识别 Key 开箱即用"
   ],
-  "publishedAt": "2026-11-27T09:04:41.802Z",
+  "publishedAt": "2026-11-27T09:22:11.957Z",
   "channel": "jsdelivr"
 }
