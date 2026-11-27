@@ -1,16 +1,17 @@
 {
-  "versionCode": 11,
-  "versionName": "1.5.2",
-  "apkUrl": "https://cdn.jsdelivr.net/gh/zhouyu-1/mytest@d6fb89cdb8252bb91b46f0e16eda1b8e54283854/dist/calorie-diary-latest.apk",
-  "size": 4432493,
-  "sha256": "A53EB565673DFA020BA24AA32CA85F3A6D83BFA5A9DC0EF2B6F0666B1D9B454E",
+  "versionCode": 12,
+  "versionName": "1.5.3",
+  "apkUrl": "https://cdn.jsdelivr.net/gh/zhouyu-1/mytest@17c32f05ade6434897e457853808037d40d3dfba/dist/calorie-diary-latest.apk",
+  "size": 4434305,
+  "sha256": "87ECFEE4E3E9FAD0B3471B2408BA8C8C409A140F0B6E6F4C295E6EFCE2AAAECF",
   "force": false,
   "changelog": [
-    "修复更新进度条：显示真实下载百分比和速度",
-    "按钮上直接显示进度（如 45%）",
-    "下载卡住时提示仍在进行",
-    "内置识别 Key 开箱即用"
+    "运动自动读取：打开 App 自动导入当天运动记录",
+    "可开关自动导入（设置里）",
+    "防重复导入（每天最多一次）",
+    "修复数据保存延迟问题（saveNow）",
+    "无权限时不弹窗打扰"
   ],
-  "publishedAt": "2026-11-27T09:22:11.957Z",
+  "publishedAt": "2026-11-27T10:01:14.475Z",
   "channel": "jsdelivr"
 }
