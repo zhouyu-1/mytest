@@ -1,16 +1,17 @@
 {
-  "versionCode": 8,
-  "versionName": "1.4.4",
-  "apkUrl": "https://cdn.jsdelivr.net/gh/zhouyu-1/mytest@164b0da54384e976b00fcc228dccb7c8af57f616/dist/calorie-diary-latest.apk",
-  "size": 4428245,
-  "sha256": "2D1FB475B6A00E3C1A8E7432764E095AE232B5C688132A6B6B9EDA4DC130F024",
+  "versionCode": 9,
+  "versionName": "1.5.0",
+  "apkUrl": "https://cdn.jsdelivr.net/gh/zhouyu-1/mytest@3eb4d4ecb249f802e4c7c8f1730149e2566eea85/dist/calorie-diary-latest.apk",
+  "size": 4429893,
+  "sha256": "DFDD74B66E389937EDA31EAA13396E366B988AE7DB54E10209CA02DFD926C824",
   "force": false,
   "changelog": [
-    "修复 iOS 拍照识别显示网络不通（错误文案误导）",
-    "新增饮料和包装食品识别（汽水/果汁/牛奶/啤酒/零食）",
-    "网络失败时给出明确排查提示",
-    "iOS Safari 增加 75 秒超时保护"
+    "新增硬基流动直连识别（3~6秒，比原来快1.7倍）",
+    "默认模型 Qwen3-Omni-30B（最省token）",
+    "浏览器直连，不需要中转",
+    "保留 Cloudflare 作为傅底",
+    "图片压缩优化到 600px"
   ],
-  "publishedAt": "2026-11-26T09:23:11.857Z",
+  "publishedAt": "2026-11-27T07:56:29.603Z",
   "channel": "jsdelivr"
 }
